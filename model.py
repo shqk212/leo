@@ -59,6 +59,7 @@ class LEO(snt.AbstractModule):
   def __init__(self, config=None, use_64bits_dtype=True, name="leo"):
     super(LEO, self).__init__(name=name)
 
+
     self._float_dtype = tf.float64 if use_64bits_dtype else tf.float32
     self._int_dtype = tf.int64 if use_64bits_dtype else tf.int32
 

@@ -23,74 +23,61 @@ from absl import flags
 
 
 FLAGS = flags.FLAGS
-flags.DEFINE_string("data_path", None, "Path to the dataset.")
-flags.DEFINE_string(
-    "dataset_name", "miniImageNet", "Name of the dataset to "
-    "train on, which will be mapped to data.MetaDataset.")
-flags.DEFINE_string(
-    "embedding_crop", "center", "Type of the cropping, which "
-    "will be mapped to data.EmbeddingCrop.")
-flags.DEFINE_boolean("train_on_val", False, "Whether to train on the "
-                     "validation data.")
+flags.DEFINE_string("data_path", None, "Path to the dataset")
 
-flags.DEFINE_integer(
-    "inner_unroll_length", 5, "Number of unroll steps in the "
-    "inner loop of leo (number of adaptation steps in the "
-    "latent space).")
-flags.DEFINE_integer(
-    "finetuning_unroll_length", 5, "Number of unroll steps "
-    "in the loop performing finetuning (number of adaptation "
-    "steps in the parameter space).")
-flags.DEFINE_integer("num_latents", 64, "The dimensionality of the latent "
-                     "space.")
-flags.DEFINE_float(
-    "inner_lr_init", 1.0, "The initialization value for the "
-    "learning rate of the inner loop of leo.")
-flags.DEFINE_float(
-    "finetuning_lr_init", 0.001, "The initialization value for "
-    "learning rate of the finetuning loop.")
-flags.DEFINE_float("dropout_rate", 0.5, "Rate of dropout: probability of "
-                   "dropping a given unit.")
-flags.DEFINE_float(
-    "kl_weight", 1e-3, "The weight measuring importance of the "
-    "KL in the final loss. β in the paper.")
-flags.DEFINE_float(
-    "encoder_penalty_weight", 1e-9, "The weight measuring "
-    "importance of the encoder penalty in the final loss. γ in "
-    "the paper.")
-flags.DEFINE_float("l2_penalty_weight", 1e-8, "The weight measuring the "
-                   "importance of the l2 regularization in the final loss. λ₁ "
-                   "in the paper.")
-flags.DEFINE_float("orthogonality_penalty_weight", 1e-3, "The weight measuring "
-                   "the importance of the decoder orthogonality regularization "
-                   "in the final loss. λ₂ in the paper.")
+flags.DEFINE_string("dataset_name", "miniImageNet", "Name of the dataset to train "
+                                                    "on which will be mapped to data.MetaDataset")
 
-flags.DEFINE_integer(
-    "num_classes", 5, "Number of classes, N in N-way classification.")
-flags.DEFINE_integer(
-    "num_tr_examples_per_class", 1, "Number of training samples per class, "
-    "K in K-shot classification.")
-flags.DEFINE_integer(
-    "num_val_examples_per_class", 15, "Number of validation samples per class "
-    "in a task instance.")
-flags.DEFINE_integer("metatrain_batch_size", 12, "Number of problem instances "
-                     "in a batch.")
-flags.DEFINE_integer("metavalid_batch_size", 200, "Number of meta-validation "
-                     "problem instances.")
-flags.DEFINE_integer("metatest_batch_size", 200, "Number of meta-testing "
-                     "problem instances.")
-flags.DEFINE_integer("num_steps_limit", int(1e5), "Number of steps to train "
-                     "for.")
-flags.DEFINE_float("outer_lr", 1e-4, "Outer (metatraining) loop learning "
-                   "rate.")
-flags.DEFINE_float(
-    "gradient_threshold", 0.1, "The cutoff for the gradient "
-    "clipping. Gradients will be clipped to "
-    "[-gradient_threshold, gradient_threshold]")
-flags.DEFINE_float(
-    "gradient_norm_threshold", 0.1, "The cutoff for clipping of "
-    "the gradient norm. Gradient norm clipping will be applied "
-    "after pointwise clipping (described above).")
+flags.DEFINE_string("embedding_crop", "center", "Type of the cropping, which will be mapped to data.EmbeddingCrop")
+
+flags.DEFINE_boolean("train_on_val", False, "Whether to train on the validation data")
+
+flags.DEFINE_integer("inner_unroll_length", 5, "Number of unroll steps in the inner loop of leo "
+                                               "(number of adaptation steps in the latent space)")
+
+flags.DEFINE_integer("finetuning_unroll_length", 5, "Number of unroll steps in the loop performing finetuning "
+                                                    "(number of adaptation steps in the parameter space).")
+
+flags.DEFINE_integer("num_latents", 64, "The dimensionality of the latent space.")
+
+flags.DEFINE_float("inner_lr_init", 1.0, "The initialization value for the learning rate of the inner loop of leo.")
+
+flags.DEFINE_float("finetuning_lr_init", 0.001, "The initialization value for learning rate of the finetuning loop.")
+
+flags.DEFINE_float("dropout_rate", 0.5, "Rate of dropout: probability of dropping a given unit.")
+
+flags.DEFINE_float("kl_weight", 1e-3, "The weight measuring importance of the KL in the final loss. β in the paper.")
+
+flags.DEFINE_float("encoder_penalty_weight", 1e-9, "The weight measuring importance of the encoder penalty "
+                                                   "in the final loss. γ in the paper.")
+
+flags.DEFINE_float("l2_penalty_weight", 1e-8, "The weight measuring the importance of the l2 regularization "
+                                              "in the final loss λ₁in the paper.")
+
+flags.DEFINE_float("orthogonality_penalty_weight", 1e-3, "The weight measuring the importance of the decoder orthogonality "
+                                                         "regularization in the final loss. λ₂ in the paper.")
+
+flags.DEFINE_integer("num_classes", 5, "Number of classes, N in N-way classification.")
+
+flags.DEFINE_integer("num_tr_examples_per_class", 1, "Number of training samples per class, K in K-shot classification.")
+
+flags.DEFINE_integer("num_val_examples_per_class", 15, "Number of validation samples per class in a task instance.")
+
+flags.DEFINE_integer("metatrain_batch_size", 12, "Number of problem instances in a batch.")
+
+flags.DEFINE_integer("metavalid_batch_size", 200, "Number of meta-validation problem instances.")
+
+flags.DEFINE_integer("metatest_batch_size", 200, "Number of meta-testing problem instances.")
+
+flags.DEFINE_integer("num_steps_limit", int(1e5), "Number of steps to train for.")
+
+flags.DEFINE_float("outer_lr", 1e-4, "Outer (metatraining) loop learning rate.")
+
+flags.DEFINE_float("gradient_threshold", 0.1, "The cutoff for the gradient clipping. Gradients will be clipped to "
+                                              "[-gradient_threshold, gradient_threshold]")
+
+flags.DEFINE_float("gradient_norm_threshold", 0.1, "The cutoff for clipping of the gradient norm. Gradient norm clipping "
+                                                   "will be applied after pointwise clipping (described above).")
 
 
 def get_data_config():
